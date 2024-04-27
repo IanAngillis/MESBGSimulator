@@ -8,23 +8,86 @@
 
 </head>
 <body>
-    <h1>This is a MESBG Simulator</h1>
-    <table border="3">
-        <thead>
-        <tr>Heading 1</tr>
-        <tr>Heading 2</tr>
-        </thead>
-        <tbody>
-        <tr>
-        <td contenteditable='true'></td>
-        <td contenteditable='true'></td>
-        </tr>
-        <tr>
-        <td contenteditable='true'></td>
-        <td contenteditable='true'></td>
-        </tr>
-        </tbody>
+    <section>
+        <h1>This is a MESBG Simulator</h1>
+        <p>This simulation works by inputting the stats of your frontline in the simulator, entering the amount of simulations, and then clciking the Simulate button. Results will be shown at the bottom.
+            This simulator does the absolute minimum on validation checks. Please make sure the data you enter is correct.
+        </p>
+        <table>
+            <thead>
+            <tr>Simulator data</tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Position</td>
+                    <td>Active</td>
+                    <td>Fight</td>
+                    <td>Strength</td>
+                    <td>Defence</td>
+                    <td>Attack</td>
+                    <td>Courage</td>
+                    <td>Banner</td>
+                    <td>Elven Blade</td>
+                </tr>
+                <tr>
+                    <td>A Support</td>
+                    <td><input type="checkbox" id="ASupportActive" checked/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="ASupportFight"/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="ASupportStrength"/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="ASupportDefence"/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="ASupportAttack"/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="ASupportCourage"/></td>
+                    <td><input type="checkbox" id="ASupportBanner"/></td>
+                    <td><input type="checkbox" id="ASupportElvenBlade"/></td>
+                </tr>
+                <tr>
+                    <td>A Frontliner</td>
+                    <td><input type="checkbox" id="AFrontlinerActive" disabled="disabled" checked/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="AFrontlinerFight"/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="AFrontlinerStrength"/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="AFrontlinerDefence"/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="AFrontlinerAttack"/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="AFrontlinerCourage"/></td>
+                    <td><input type="checkbox" id="AFrontlinerBanner"/></td>
+                    <td><input type="checkbox" id="AFrontlinerElvenBlade"/></td>
+                </tr>
+                <tr>
+                    <td>D Frontliner</td>
+                    <td><input type="checkbox" id="DFrontlinerActive" disabled="disabled" checked/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="DFrontlinerFight"/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="DFrontlinerStrength"/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="DFrontlinerDefence"/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="DFrontlinerAttack"/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="DFrontlinerCourage"/></td>
+                    <td><input type="checkbox" id="DFrontlinerBanner"/></td>
+                    <td><input type="checkbox" id="DFrontlinerElvenBlade"/></td>
+                </tr>
+                <tr>
+                    <td>D Support</td>
+                    <td><input type="checkbox" id="DSupportActive" checked/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="DSupportFight"/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="DSupportStrength"/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="DSupportDefence"/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="DSupportAttack"/></td>
+                    <td><input type="number" placeholder="0" min="0" max="10" id="DSupportCourage"/></td>
+                    <td><input type="checkbox" id="DSupportBanner"/></td>
+                    <td><input type="checkbox" id="DSupportElvenBlade"/></td>
+                </tr>
+            </tbody>
         </table>
+    </section>
+    <section>
+        <hr>
+        <h1>Simulate data</h1>
+        <label>Simulate amount:</label>
+        <input type="number" min="10" max="100000" id="simulateAmount"/>
+        <button id="simulateButton">Simulate</button>
+        <p>The simulation amount will yield a more statistically significant result with a higher simulation amount. But as Javascript is a single-threaded programming language, large simulations may slow down your device.</p>
+        <hr>
+        <h1>Results:</h1>
+    </section>
+    
+
 
     <script src="./script.js"></script>
 </body>
