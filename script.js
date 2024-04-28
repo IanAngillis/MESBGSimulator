@@ -59,14 +59,30 @@ function resolveBout(attackerDuelBundle, defenderDuelBundle){
     // Get the attacker and defender rolls, save these to somewhere later. Keep those in the bout.
     let attackerRolls = new Array(attackerDuelBundle.Attack).fill(0).map(x => rollDice());
     var attackerMaxValue = attackerRolls.reduce((a, b) => {return Math.max(a, b)});
-    let attackerRerRollValue = attackerRolls.reduce((a, b) => {return Math.min(a, b)});
+    let attackerReRollValue = attackerRolls.reduce((a, b) => {return Math.min(a, b)});
 
     let defenderRolls = new Array(defenderDuelBundle.Attack).fill(0).map(x => rollDice());
     var defenderMaxValue = defenderRolls.reduce((a, b) => {return Math.max(a, b)});
     let defenderReRollValue = defenderRolls.reduce((a, b) => {return Math.min(a, b)});
 
-    // TODO IAS Banner shenanigans
-    resolveBanners(attackerMaxValue, defenderMaxvalue, attackerDuelBundle, defenderDuelBundle);
+    // This piece of code handles the banner handling. The banner handling does not take into consideration when someone wins, rather, it simulates the optimal decision making process when you would want to reroll.
+    if(attackerDuelBundle.HasBanner && defenderDuelBundle.HasBanner){
+        // Als we gelijk gooien willen we banner roll gooien, evenals we verliezen. En ook als we eerst winnen, maar dan verliezen door banner roll van de tegenstander.
+        // Implementeer dit nu.
+
+    }else if(attackerDuelBundle.HasBanner && !defenderDuelBundle.HasBanner && (attackerMaxValue < defenderMaxValue)){
+        attackerReRollValue = rollDice();
+        if(attackerReRollValue > attackerMaxValue){
+            attackerMaxValue = attackerReRollValue;
+        }
+
+    } else if(defenderDuelBundle.hasBanner && !attackerDuelBundle.HasBanner && (defenderMaxValue < attackerMaxValue)){
+        defenderReRollValue = rollDice();
+        if(defenderReRollValue > defenderMaxValue){
+            defenderMaxValue = defenderReRollValue;
+        }
+    }
+    
     // TODO resolve
 
     if(attackerMaxValue > defenderMaxValue){
@@ -80,55 +96,69 @@ function resolveBout(attackerDuelBundle, defenderDuelBundle){
         bout.loser = AFRONTLINER;
         bout.loserDiceRolls = attackerRolls;
     } else {
-        // Must be equal.
-        if(attackerDuelBundle.HasElvenBlade && defenderDuelBundle.HasElvenBlade){
-            // If everyone has an elven blade, no one has an elven blade. -- identical code, might need refactoring.
-            let result = rollDice();
 
-            if(result > 3){
-                bout.winner = AFRONTLINER;
-                bout.winnerDiceRolls = attackerRolls;
-                bout.loser = DFRONTLINER;
-                bout.loserDiceRolls = defenderRolls;
+        // Check Fight Value, only then do roll off and only then do check for elven blade.;
+        if(attackerDuelBundle.Fight == defenderDuelBundle.Fight){
+            // Must be equal.
+            if(attackerDuelBundle.HasElvenBlade && defenderDuelBundle.HasElvenBlade){
+                // If everyone has an elven blade, no one has an elven blade. -- identical code, might need refactoring.
+                let result = rollDice();
+
+                if(result > 3){
+                    bout.winner = AFRONTLINER;
+                    bout.winnerDiceRolls = attackerRolls;
+                    bout.loser = DFRONTLINER;
+                    bout.loserDiceRolls = defenderRolls;
+                } else {
+                    bout.winner = DFRONTLINER;
+                    bout.winnerDiceRolls = defenderRolls;
+                    bout.loser = AFRONTLINER;
+                    bout.loserDiceRolls = attackerRolls;
+                }
+            } else if(attackerDuelBundle.HasElvenBlade || defenderDuelBundle.HasElvenBlade){
+                // figure out who has the elven blade and make the rolls go in its favour.
+                let result = rollDice();
+
+                if(result > 2){
+                    bout.winner = attackerDuelBundle.HasElvenBlade ? AFRONTLINER : DFRONTLINER;
+                    bout.winnerDiceRolls = attackerDuelBundle.HasElvenBlade ? attackerRolls : defenderRolls;
+                    bout.loser = attackerDuelBundle.HasElvenBlade ? DFRONTLINER : AFRONTLINER;
+                    bout.loserDiceRolls = attackerDuelBundle.HasElvenBlade ? defenderRolls : attackerRolls;
+                    bout.WonBecauseOfElvenBlade = true;
+                }else {
+                    bout.winner = attackerDuelBundle.HasElvenBlade ? DFRONTLINER : AFRONTLINER;
+                    bout.winnerDiceRolls = attackerDuelBundle.HasElvenBlade ? defenderRolls : attackerRolls;
+                    bout.loser = attackerDuelBundle.HasElvenBlade ? AFRONTLINER : DFRONTLINER;
+                    bout.loserDiceRolls = attackerDuelBundle.HasElvenBlade ? attackerRolls : defenderRolls;
+                    bout.WonBecauseOfElvenBlade = false;
+                }
+
             } else {
-                bout.winner = DFRONTLINER;
-                bout.winnerDiceRolls = defenderRolls;
-                bout.loser = AFRONTLINER;
-                bout.loserDiceRolls = attackerRolls;
-            }
-        } else if(attackerDuelBundle.HasElvenBlade || defenderDuelBundle.HasElvenBlade){
-            // figure out who has the elven blade and make the rolls go in its favour.
-            let result = rollDice();
+                // No elven blade, in this regard we want the attacker to be good and thus he needs 4 5 or 6 to win.
+                let result = rollDice();
 
-            if(result > 2){
-                bout.winner = attackerDuelBundle.HasElvenBlade ? AFRONTLINER : DFRONTLINER;
-                bout.winnerDiceRolls = attackerDuelBundle.HasElvenBlade ? attackerRolls : defenderRolls;
-                bout.loser = attackerDuelBundle.HasElvenBlade ? DFRONTLINER : AFRONTLINER;
-                bout.loserDiceRolls = attackerDuelBundle.HasElvenBlade ? defenderRolls : attackerRolls;
-                bout.WonBecauseOfElvenBlade = true;
-            }else {
-                bout.winner = attackerDuelBundle.HasElvenBlade ? DFRONTLINER : AFRONTLINER;
-                bout.winnerDiceRolls = attackerDuelBundle.HasElvenBlade ? defenderRolls : attackerRolls;
-                bout.loser = attackerDuelBundle.HasElvenBlade ? AFRONTLINER : DFRONTLINER;
-                bout.loserDiceRolls = attackerDuelBundle.HasElvenBlade ? attackerRolls : defenderRolls;
-                bout.WonBecauseOfElvenBlade = false;
+                if(result > 3){
+                    bout.winner = AFRONTLINER;
+                    bout.winnerDiceRolls = attackerRolls;
+                    bout.loser = DFRONTLINER;
+                    bout.loserDiceRolls = defenderRolls;
+                } else {
+                    bout.winner = DFRONTLINER;
+                    bout.winnerDiceRolls = defenderRolls;
+                    bout.loser = AFRONTLINER;
+                    bout.loserDiceRolls = attackerRolls;
+                }
             }
-
+        }else if(attackerDuelBundle.Fight > defenderDuelBundle){
+            bout.winner = AFRONTLINER;
+            bout.winnerDiceRolls = attackerRolls;
+            bout.loser = DFRONTLINER;
+            bout.loserDiceRolls = defenderRolls;
         } else {
-            // No elven blade, in this regard we want the attacker to be good and thus he needs 4 5 or 6 to win.
-            let result = rollDice();
-
-            if(result > 3){
-                bout.winner = AFRONTLINER;
-                bout.winnerDiceRolls = attackerRolls;
-                bout.loser = DFRONTLINER;
-                bout.loserDiceRolls = defenderRolls;
-            } else {
-                bout.winner = DFRONTLINER;
-                bout.winnerDiceRolls = defenderRolls;
-                bout.loser = AFRONTLINER;
-                bout.loserDiceRolls = attackerRolls;
-            }
+            bout.winner = DFRONTLINER;
+            bout.winnerDiceRolls = defenderRolls;
+            bout.loser = AFRONTLINER;
+            bout.loserDiceRolls = attackerRolls;
         }
     }
 
@@ -155,11 +185,6 @@ function resolveBout(attackerDuelBundle, defenderDuelBundle){
     console.log("bout");
     console.log(bout);
     return bout;
-}
-
-function resolveBanners(attackerMaxValue, defenderMaxvalue, attackerDuelBundle, defenderDuelBundle){
-    attackerMaxValue += 10;
-    defenderMaxvalue += 10;
 }
 
 function rollDice(){
